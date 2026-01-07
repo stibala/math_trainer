@@ -1,5 +1,5 @@
 [project]
-name = "math"
+name = "math_trainer"
 version = "0.1.0"
 description = ""
 authors = [
@@ -8,6 +8,8 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "typer (>=0.21.1,<0.22.0)",
+    "matplotlib (>=3.10.8,<4.0.0)"
 ]
 
 
