@@ -61,36 +61,44 @@ def train(
     correct_answers = 0
     total_time_per_question = []
     mistakes = []
+    generated_prompts = set()
 
     for question_num in range(1, num_questions + 1):
-        # 1. Determine Operation
-        current_op = operation
-        if operation == "both":
-            current_op = random.choice(["addition", "subtraction"])
+        # 1. Determine Operation and 2. Determine Pattern and 3. Generate Problem (loop until unique)
+        while True:
+            current_op = operation
+            if operation == "both":
+                current_op = random.choice(["addition", "subtraction"])
 
-        # 2. Determine Pattern
-        is_missing_val = False
-        if mode == "missing":
-            is_missing_val = True
-        elif mode == "mixed":
-            is_missing_val = random.choice([True, False])
+            is_missing_val = False
+            if mode == "missing":
+                is_missing_val = True
+            elif mode == "mixed":
+                is_missing_val = random.choice([True, False])
 
-        # 3. Generate Problem
-        if current_op == "addition":
-            a, b = random.randint(0, max_number), random.randint(0, max_number)
-            result = a + b
-            if is_missing_val:
-                prompt, correct = f"{a} + _ = {result}", b
+            if current_op == "addition":
+                a, b = random.randint(0, max_number), random.randint(0, max_number)
+                result = a + b
+                if is_missing_val:
+                    prompt, correct = f"{a} + _ = {result}", b
+                else:
+                    prompt, correct = f"{a} + {b} = ", result
             else:
-                prompt, correct = f"{a} + {b} = ", result
-        else:
-            a = random.randint(0, max_number)
-            b = random.randint(0, a)
-            result = a - b
-            if is_missing_val:
-                prompt, correct = f"{a} - _ = {result}", b
-            else:
-                prompt, correct = f"{a} - {b} = ", result
+                a = random.randint(0, max_number)
+                b = random.randint(0, a)
+                result = a - b
+                if is_missing_val:
+                    prompt, correct = f"{a} - _ = {result}", b
+                else:
+                    prompt, correct = f"{a} - {b} = ", result
+            
+            if prompt not in generated_prompts:
+                generated_prompts.add(prompt)
+                break
+            
+            # Safety break if we ran out of unique problems (unlikely with default max_number)
+            if len(generated_prompts) >= (max_number + 1) * (max_number + 1) * 2: # Very rough upper bound
+                 break
 
         # 4. Input Loop
         q_start = time.time()

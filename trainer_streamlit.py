@@ -69,6 +69,7 @@ def reset_session():
         "correct",
         "q_start",
         "answer_log",
+        "generated_problems",
     ]:
         if key in st.session_state:
             del st.session_state[key]
@@ -87,6 +88,8 @@ def ensure_session_initialized():
         st.session_state.mistakes = []
     if "answer_log" not in st.session_state:
         st.session_state.answer_log = []  # list[str] of HTML lines (latest first when rendered)
+    if "generated_problems" not in st.session_state:
+        st.session_state.generated_problems = []
 
 
 def start_session(max_number: int, num_questions: int, operation: str, mode: str):
@@ -96,14 +99,17 @@ def start_session(max_number: int, num_questions: int, operation: str, mode: str
     st.session_state.total_times = []
     st.session_state.mistakes = []
     st.session_state.answer_log = []
+    st.session_state.generated_problems = []
     st.session_state.max_number = max_number
     st.session_state.num_questions = num_questions
     st.session_state.operation = operation
     # Normalize mode: UI allows "both"; persistence expects 'standard'/'missing'/'mixed'
     st.session_state.mode = "mixed" if mode == "both" else mode
-    st.session_state.prompt, st.session_state.correct = generate_problem(
-        max_number, operation, st.session_state.mode
-    )
+    
+    # Generate first problem
+    p, c = generate_problem(max_number, operation, st.session_state.mode)
+    st.session_state.prompt, st.session_state.correct = p, c
+    st.session_state.generated_problems.append(p)
     st.session_state.q_start = time.time()
 
 
@@ -140,9 +146,21 @@ def advance_after_answer(user_answer: int):
 
     # Move to next question
     st.session_state.current_question += 1
-    st.session_state.prompt, st.session_state.correct = generate_problem(
+    
+    # Generate a unique problem
+    new_p, new_c = generate_problem(
         st.session_state.max_number, st.session_state.operation, st.session_state.mode
     )
+    # Simple retry logic to avoid duplicates if possible
+    retries = 0
+    while new_p in st.session_state.generated_problems and retries < 100:
+        new_p, new_c = generate_problem(
+            st.session_state.max_number, st.session_state.operation, st.session_state.mode
+        )
+        retries += 1
+    
+    st.session_state.prompt, st.session_state.correct = new_p, new_c
+    st.session_state.generated_problems.append(new_p)
     st.session_state.q_start = time.time()
 
 
