@@ -31,12 +31,16 @@ def generate_problem(max_number: int, operation: str, mode: str) -> Tuple[str, i
     """
     current_op = _choose_operation(operation)
     is_missing_val = _choose_missing(mode)
+    random_position = random.choice([0,1])
 
     if current_op == "addition":
         a, b = random.randint(0, max_number), random.randint(0, max_number)
         result = a + b
         if is_missing_val:
-            prompt, correct = f"{a} + _ = {result}", b
+            if random_position == 0:
+                prompt, correct = f"{a} + _ = {result}", b
+            else:
+                prompt, correct = f"_ + {a} = {result}", b
         else:
             prompt, correct = f"{a} + {b} = ?", result
     else:
@@ -44,7 +48,10 @@ def generate_problem(max_number: int, operation: str, mode: str) -> Tuple[str, i
         b = random.randint(0, a)
         result = a - b
         if is_missing_val:
-            prompt, correct = f"{a} - _ = {result}", b
+            if random_position == 0:
+                prompt, correct = f"{a} - _ = {result}", b
+            else:
+                prompt, correct = f"_ - {b} = {result}", a
         else:
             prompt, correct = f"{a} - {b} = ?", result
 
@@ -140,9 +147,9 @@ def advance_after_answer(user_answer: int):
 
 
 def main():
-    st.set_page_config(page_title="Math Trainer 2 (Local)", page_icon="🧮", layout="centered")
-    st.title("🧮 Local Math Trainer 2")
-    st.caption("Practice addition and subtraction. Results are saved per user on this machine.")
+    st.set_page_config(page_title="Math Trainer", page_icon="🧮", layout="centered")
+    st.title("🧮 Math Trainer")
+    st.caption("Practice addition and subtraction.")
 
     ensure_session_initialized()
 
