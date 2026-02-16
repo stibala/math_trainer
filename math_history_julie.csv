@@ -96,3 +96,14 @@ Timestamp,Accuracy,AvgTime,Questions,Operation,Mode
 2026-02-03 19:17:31,90.00,25.88,30,both,mixed
 2026-02-03 19:21:04,85.00,10.52,20,both,mixed
 2026-02-06 18:29:28,65.00,15.28,20,both,mixed
+2026-02-15 16:56:57,65.00,13.23,20,addition,standard
+2026-02-15 17:01:24,65.00,12.26,20,addition,standard
+2026-02-15 17:07:04,60.00,16.55,20,addition,standard
+2026-02-15 17:07:44,60.00,16.55,20,addition,standard
+2026-02-15 17:11:52,90.00,12.29,20,subtraction,standard
+2026-02-15 17:12:15,90.00,12.29,20,subtraction,standard
+2026-02-15 17:12:24,90.00,12.29,20,subtraction,standard
+2026-02-15 17:12:26,90.00,12.29,20,subtraction,standard
+2026-02-15 17:16:45,45.00,12.88,20,addition,missing
+2026-02-15 17:17:25,45.00,12.88,20,addition,missing
+2026-02-15 17:20:44,75.00,9.84,20,subtraction,missing
